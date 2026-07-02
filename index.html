@@ -419,6 +419,36 @@
             from { opacity: 0; transform: translateY(24px); }
             to   { opacity: 1; transform: translateY(0); }
         }
+
+        #music-toggle {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 200;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 1px solid rgba(180,130,150,0.4);
+            background: rgba(255,255,255,0.8);
+            font-size: 1.1em;
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+            opacity: 0.7;
+            line-height: 1;
+        }
+        #music-toggle.playing {
+            opacity: 1;
+            border-color: rgba(200,150,170,0.5);
+            box-shadow: 0 0 12px rgba(200,150,160,0.2);
+            animation: musicPulse 2s ease-in-out infinite;
+        }
+        @keyframes musicPulse {
+            0%, 100% { box-shadow: 0 0 8px rgba(200,150,160,0.15); }
+            50%      { box-shadow: 0 0 16px rgba(200,150,160,0.3); }
+        }
     </style>
 </head>
 <body>
@@ -459,8 +489,11 @@
                     <span class="dot" data-index="3"></span>
                     <span class="dot" data-index="4"></span>
                     <span class="dot" data-index="5"></span>
-                </div>
-            </div>
+        </div>
+    </div>
+
+    <audio id="bgm" src="bgm.mp3" preload="auto" loop></audio>
+    <button id="music-toggle" onclick="toggleMusic()" title="音乐">🎵</button>
         </div>
 
         <div id="video-section" class="reveal">
@@ -497,7 +530,13 @@ function checkPassword() {
 
     if (validPasswords.includes(input)) {
         const door = document.getElementById('door-container');
+        const bgm = document.getElementById('bgm');
+        const toggle = document.getElementById('music-toggle');
         door.classList.add('fade-out');
+        bgm.play().then(() => {
+            toggle.classList.add('playing');
+        }).catch(() => {});
+        toggle.style.display = 'flex';
         setTimeout(() => {
             door.style.display = 'none';
             document.getElementById('letter-container').style.display = 'block';
@@ -935,6 +974,21 @@ function closeLetter() {
     const page = document.getElementById('letter-page');
     page.classList.remove('show');
     setTimeout(() => { page.style.display = 'none'; }, 700);
+}
+
+let musicPlaying = false;
+function toggleMusic() {
+    const bgm = document.getElementById('bgm');
+    const btn = document.getElementById('music-toggle');
+    if (bgm.paused) {
+        bgm.play();
+        btn.classList.add('playing');
+        btn.textContent = '🎵';
+    } else {
+        bgm.pause();
+        btn.classList.remove('playing');
+        btn.textContent = '🔇';
+    }
 }
     </script>
 </body>
