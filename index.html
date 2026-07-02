@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>For My Friend</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&display=swap" rel="stylesheet">
+    <title>朱伊涵大小姐生日快乐</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -48,13 +49,23 @@
             justify-content: center;
             min-height: 100vh;
             text-align: center;
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+        #door-container.fade-out {
+            opacity: 0;
+            transform: scale(0.97);
+            pointer-events: none;
         }
         #door-container .card {
-            background: rgba(255,255,255,0.78);
-            backdrop-filter: blur(14px);
+            background: rgba(255,255,255,0.9);
             padding: 50px 44px;
             border-radius: 22px;
-            box-shadow: 0 8px 36px rgba(200,150,170,0.1);
+            box-shadow: 0 8px 36px rgba(200,150,170,0.12);
+            animation: cardEnter 1s ease-out;
+        }
+        @keyframes cardEnter {
+            from { opacity: 0; transform: translateY(20px); }
+            to   { opacity: 1; transform: translateY(0); }
         }
         #door-container h2 { font-size: 1.6em; color: #c4788a; margin-bottom: 10px; }
         #door-container p  { color: #999; margin-bottom: 18px; font-size: 15px; }
@@ -94,6 +105,27 @@
             text-align: center;
             position: relative;
             z-index: 1;
+            animation: containerIn 1s ease-out;
+        }
+        @keyframes containerIn {
+            from { opacity: 0; }
+            to   { opacity: 1; }
+        }
+        #letter-container::after {
+            content: '✦';
+            display: block;
+            text-align: center;
+            font-size: 0.7em;
+            color: #d4b8b0;
+            margin-top: 60px;
+            opacity: 0.5;
+        }
+        .section-divider {
+            width: 50px;
+            height: 1px;
+            background: #d4b8b0;
+            margin: 0 auto 32px;
+            opacity: 0.5;
         }
 
         /* ===== 区块标题浮现 ===== */
@@ -119,12 +151,24 @@
             overflow: hidden;
             box-shadow: 0 4px 24px rgba(180,130,150,0.12);
             background: #f5f0f3;
+            padding: 4px;
+        }
+        .slideshow::after {
+            content: '';
+            position: absolute;
+            inset: 4px;
+            border-radius: 13px;
+            border: 1px solid rgba(255,255,255,0.5);
+            pointer-events: none;
+            z-index: 3;
         }
         .slide {
             position: absolute;
-            inset: 0;
+            inset: 4px;
             opacity: 0;
             transition: opacity 0.9s ease-in-out;
+            border-radius: 12px;
+            overflow: hidden;
         }
         .slide.active { opacity: 1; z-index: 1; }
         .slide img {
@@ -153,6 +197,19 @@
             background: #fff;
             transform: scale(1.35);
             box-shadow: 0 0 6px rgba(255,255,255,0.6);
+        }
+        .slide-counter {
+            position: absolute;
+            top: 14px;
+            right: 16px;
+            z-index: 2;
+            background: rgba(0,0,0,0.35);
+            color: #fff;
+            font-size: 0.8em;
+            padding: 3px 10px;
+            border-radius: 12px;
+            letter-spacing: 1px;
+            backdrop-filter: blur(4px);
         }
 
         /* ===== 大标题 ===== */
@@ -241,12 +298,110 @@
             letter-spacing: 4px;
             font-weight: 400;
             transition: all 0.35s ease;
+            animation: btnPulse 2.2s ease-in-out infinite;
         }
         #btn-open-letter:hover {
             background: rgba(200,150,160,0.08);
             border-color: #c4908a;
             color: #b0707a;
             box-shadow: 0 0 20px rgba(200,150,160,0.15);
+            animation: none;
+        }
+        @keyframes btnPulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(200,150,160,0.25); }
+            50%      { box-shadow: 0 0 16px 4px rgba(200,150,160,0.12); }
+        }
+
+        /* ===== 独立信页 ===== */
+        #letter-page {
+            position: fixed;
+            inset: 0;
+            z-index: 100;
+            background: linear-gradient(175deg, #fdf6f7 0%, #fef9f5 30%, #faf6f9 60%, #fdf4f6 100%);
+            display: none;
+            align-items: flex-start;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.7s ease;
+            overflow-y: auto;
+            padding: 80px 24px 60px;
+        }
+        #letter-page.show {
+            opacity: 1;
+        }
+        #letter-back {
+            position: absolute;
+            top: 28px;
+            left: 24px;
+            background: none;
+            border: none;
+            color: #c4908a;
+            font-size: 0.95em;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+        #letter-back:hover { color: #a06070; }
+        .letter-page-inner {
+            max-width: 600px;
+            width: 100%;
+            text-align: left;
+            line-height: 2.2;
+            color: #6a5a5e;
+            font-size: 1.05em;
+            font-family: 'Noto Serif SC', 'Songti SC', 'STSong', 'SimSun', 'KaiTi', serif;
+            background: rgba(255,255,255,0.55);
+            border-radius: 12px;
+            padding: 36px 32px;
+            box-shadow: 0 2px 20px rgba(180,140,150,0.06);
+            animation: letterReveal 1s ease-out;
+        }
+        .letter-page-inner p { margin-bottom: 20px; text-indent: 2em; }
+        .letter-title {
+            font-size: 1.45em;
+            color: #b08080;
+            font-weight: 600;
+            text-align: center;
+            margin-bottom: 12px;
+            text-indent: 0;
+            letter-spacing: 2px;
+        }
+        .letter-ornament {
+            text-align: center;
+            color: #d4b8b0;
+            font-size: 0.9em;
+            letter-spacing: 6px;
+            margin-bottom: 36px;
+        }
+        .letter-sign {
+            text-align: right;
+            text-indent: 0 !important;
+            margin-top: 40px;
+            color: #b08080;
+            font-weight: 500;
+            letter-spacing: 2px;
+        }
+        .letter-highlight {
+            text-align: center;
+            text-indent: 0 !important;
+            font-size: 1.3em;
+            font-weight: 600;
+            color: #d4887a;
+            letter-spacing: 4px;
+            margin: 32px 0;
+            padding: 12px 0;
+            position: relative;
+        }
+        .letter-highlight::before,
+        .letter-highlight::after {
+            content: '·';
+            font-size: 1.5em;
+            margin: 0 12px;
+            color: #dbb0a8;
+        }
+        @keyframes letterReveal {
+            from { opacity: 0; transform: translateY(24px); }
+            to   { opacity: 1; transform: translateY(0); }
         }
     </style>
 </head>
@@ -280,6 +435,7 @@
                 <div class="slide"><img src="4.jpg" alt=""></div>
                 <div class="slide"><img src="5.jpg" alt=""></div>
                 <div class="slide"><img src="6.jpg" alt=""></div>
+                <div class="slide-counter" id="slide-counter">1 / 6</div>
                 <div class="slide-nav">
                     <span class="dot active" data-index="0"></span>
                     <span class="dot" data-index="1"></span>
@@ -292,20 +448,29 @@
         </div>
 
         <div id="video-section" class="reveal">
-            <p class="section-title">✧ 生日视频 ✧</p>
+            <p class="section-title">✧ 话痨日常（极少部分） ✧</p>
             <div class="video-box">
-                <video src="65e88f92a30acea7240550f6f590ec1f.mp4" controls></video>
+                <video src="65e88f92a30acea7240550f6f590ec1f.mp4" controls playsinline></video>
             </div>
         </div>
 
-        <div id="letter-btn-wrap" class="reveal" style="text-align:center;margin-bottom:36px;">
+        <div id="letter-btn-wrap" class="reveal" style="text-align:center;padding-top:12px;padding-bottom:60px;">
+            <div class="section-divider"></div>
             <button id="btn-open-letter" onclick="openLetter()">伏乞圣鉴</button>
         </div>
+    </div>
 
-        <div id="letter-text" style="display:none;">
-            <p>亲爱的朱伊涵同学：</p>
-            <p>这里是你写给她的信的具体内容，先占个位置...</p>
-            <p>你可以在这里写下你想说的话。</p>
+    <!-- ========== 信页（独立全屏） ========== -->
+    <div id="letter-page">
+        <button id="letter-back" onclick="closeLetter()">← 返回</button>
+        <div class="letter-page-inner">
+            <h2 class="letter-title">给朱伊涵同学的生日信</h2>
+            <div class="letter-ornament">— ✦ —</div>
+            <p>生日快乐啊🐖🐖大小姐，这么说你现在已经是个奔三的老阿姨了嘛（小声蛐蛐），看到开头那张照片笑了没，老实说，反正我是没绷住，hhhhhh，好了好了，不开玩笑。不过其实在我的印象里朱伊涵的形象好像定格在了那个时候，虽然我确信在大学生活里你一直在不断变得优秀，不断变得成熟，不断变得更加的好看，不断地变成你想象中的自己，但是在我的脑海深处你好像还是那个喜欢在课间拿个水果盒问我们吃不吃水果的朱伊涵同学，是那个笑起来傻模傻样的女孩子（现在好像也是），那年的蝉鸣，午后晃眼的阳光，还有ljn的区区（），一切好像都过去了没多久，一切又好像过了很久。岁月不居，时节如流，记得那天晚上你给我看的聊天记录，有点🍬，毋庸置疑，但剩下的就是蛮多的回忆了，那个时候我在班里的人缘蛮差的其实，但是吧总有傻子愿意陪这种人玩儿，hhhhh，虽然有点肉麻，但真的挺谢谢你的，我还记得那次篮球赛，你问我有没有空接电话，我接上只能听到你在哭，你说你看到他们在墙上骂我，这事我记一辈子。我的高中生活三年的一半开心是你和周昕贝给我带来的，另一半就是我的家人和天齐章佶朱承安他们这些朋友给我带来的，还记得你发的那张聊天记录里我在说我把你们当家人一样，这句话没骗过你们哦，当时是，现在也是，未来就看你们认不认了（）。哦对了说到聊天记录，我的之前的手机还在家里，之前的聊天记录没得翻了，要不然图集里高低整点尬的给你，还记得我们聊了挺多的，这个男生那个女生好多好多。好了好了，有个很重要的话题，记得你有一次问我是不是感情淡了，我也和你好好聊了，不过我还想狠狠强调一遍，作为一个非常五大三粗的男生，我对很多的细节真的掌握的不是很到位，这一点还烦请🐖大小姐理解理解（理解不了也得给我理解😡），而且我想给林爽这个虽然不熟但是一定是我好bro最好的距离感，不过你们来武汉那次确实这个只占一小部分，主要还是我贪玩了，太想找他们玩了，臣恳请陛下恕罪（不恕罪也得恕😡），下次陛下巡游至此我必须狠狠招待！！！另外，其实我平常跟以前的朋友联系的真的很少，无论关系多好（其实联不联系都看打不打游戏），君子之交淡如水你懂不，哗啦啦啦啦天在下雨的那种水，懂不懂不。</p>
+            <p>至于这个生日礼物，说实话我送生日礼物只有两个对象，哦准确来说四个，我爸我后妈（应该是了吧）然后你和周昕贝，所以庆贺吧（不是），我真不知道送女生啥生日礼物，问的ai，其实本来想送魔卡少女樱的服装的，但是我发现好一点的得要2/3000，现在的我真的有点困难，不太想多找家里要钱，理解理解无能的小弟吧😭😭😭，等我出来工作了我一定给🐖大小姐鞍前马后，尽犬马之劳😭😭😭，所以只能挑一个包包了，喜欢最好，我也花了快半个点挑了呢，唉像我这样的好男人为什么没有女朋友（）。总而言之，还是希望你能够喜欢哦，要不然我得质疑我的眼光了。</p>
+            <p>20岁，也快大三了，再次诚挚希望朱伊涵同学，啊不，现在是朱伊涵小姐能在未来掌握自己的一切，能无忧无虑地吃自己喜欢吃的，坚定的喜欢自己喜欢的，拿到自己想要的，能在自己的每一个领域活得自由开心！！！</p>
+            <p class="letter-sign">2109班严晨同学</p>
+            <p class="letter-highlight">我们永远都在</p>
         </div>
     </div>
 
@@ -315,8 +480,12 @@ function checkPassword() {
     const validPasswords = ["橙子", "大橙子", "🍊"];
 
     if (validPasswords.includes(input)) {
-        document.getElementById('door-container').style.display = 'none';
-        document.getElementById('letter-container').style.display = 'block';
+        const door = document.getElementById('door-container');
+        door.classList.add('fade-out');
+        setTimeout(() => {
+            door.style.display = 'none';
+            document.getElementById('letter-container').style.display = 'block';
+        }, 500);
         launchCelebration();
     } else {
         document.getElementById('error-msg').style.display = 'block';
@@ -688,6 +857,7 @@ function launchCelebration() {
         const slides = document.querySelectorAll('#slideshow .slide');
         const dots = document.querySelectorAll('#slideshow .dot');
         const container = document.getElementById('slideshow');
+        const counter = document.getElementById('slide-counter');
         let current = 0;
         const total = slides.length;
         let timer;
@@ -700,6 +870,7 @@ function launchCelebration() {
             current = index;
             slides[current].classList.add('active');
             dots[current].classList.add('active');
+            counter.textContent = (current + 1) + ' / ' + total;
         }
 
         function next() { goTo((current + 1) % total); }
@@ -737,11 +908,17 @@ function launchCelebration() {
 }
 
 function openLetter() {
-    const letter = document.getElementById('letter-text');
-    const btnWrap = document.getElementById('letter-btn-wrap');
-    letter.style.display = 'block';
-    btnWrap.style.display = 'none';
-    letter.scrollIntoView({ behavior: 'smooth' });
+    const page = document.getElementById('letter-page');
+    page.style.display = 'flex';
+    requestAnimationFrame(() => {
+        requestAnimationFrame(() => page.classList.add('show'));
+    });
+}
+
+function closeLetter() {
+    const page = document.getElementById('letter-page');
+    page.classList.remove('show');
+    setTimeout(() => { page.style.display = 'none'; }, 700);
 }
     </script>
 </body>
