@@ -220,8 +220,34 @@
             border-radius: 16px;
             padding: 32px 28px;
             box-shadow: 0 2px 12px rgba(180,130,150,0.06);
+            max-width: 640px;
+            margin: 0 auto;
+            animation: fadeInUp 0.9s ease-out;
         }
         #letter-text p { margin-bottom: 16px; }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(28px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        #btn-open-letter {
+            padding: 14px 40px;
+            background: transparent;
+            color: #c4908a;
+            border: 1.5px solid #d4a8a8;
+            border-radius: 28px;
+            cursor: pointer;
+            font-size: 1.05em;
+            letter-spacing: 4px;
+            font-weight: 400;
+            transition: all 0.35s ease;
+        }
+        #btn-open-letter:hover {
+            background: rgba(200,150,160,0.08);
+            border-color: #c4908a;
+            color: #b0707a;
+            box-shadow: 0 0 20px rgba(200,150,160,0.15);
+        }
     </style>
 </head>
 <body>
@@ -246,7 +272,7 @@
         </div>
 
         <div id="photo-section">
-            <p class="section-title reveal" id="photo-title">✧ 我们的回忆 ✧</p>
+            <p class="section-title reveal" id="photo-title">✧ 回忆 ✧</p>
             <div class="slideshow reveal" id="slideshow">
                 <div class="slide active"><img src="1.jpg" alt=""></div>
                 <div class="slide"><img src="2.jpg" alt=""></div>
@@ -272,7 +298,11 @@
             </div>
         </div>
 
-        <div id="letter-text" class="reveal">
+        <div id="letter-btn-wrap" class="reveal" style="text-align:center;margin-bottom:36px;">
+            <button id="btn-open-letter" onclick="openLetter()">伏乞圣鉴</button>
+        </div>
+
+        <div id="letter-text" style="display:none;">
             <p>亲爱的朱伊涵同学：</p>
             <p>这里是你写给她的信的具体内容，先占个位置...</p>
             <p>你可以在这里写下你想说的话。</p>
@@ -650,16 +680,19 @@ function launchCelebration() {
     // 视频区
     reveal('video-section', 10800);
 
-    // 信件
-    reveal('letter-text', 12800);
+    // 伏乞圣鉴按钮
+    reveal('letter-btn-wrap', 12800);
 
     /* ========== 轮播逻辑 ========== */
     setTimeout(() => {
         const slides = document.querySelectorAll('#slideshow .slide');
         const dots = document.querySelectorAll('#slideshow .dot');
+        const container = document.getElementById('slideshow');
         let current = 0;
         const total = slides.length;
         let timer;
+        let touchStartX = 0;
+        let touchStartY = 0;
 
         function goTo(index) {
             slides[current].classList.remove('active');
@@ -669,20 +702,46 @@ function launchCelebration() {
             dots[current].classList.add('active');
         }
 
-        function next() {
-            goTo((current + 1) % total);
+        function next() { goTo((current + 1) % total); }
+        function prev() { goTo((current - 1 + total) % total); }
+
+        function resetTimer() {
+            clearInterval(timer);
+            timer = setInterval(next, 3500);
         }
 
         dots.forEach(d => {
             d.addEventListener('click', () => {
                 goTo(parseInt(d.dataset.index));
-                clearInterval(timer);
-                timer = setInterval(next, 3500);
+                resetTimer();
             });
+        });
+
+        // 触摸滑动
+        container.addEventListener('touchstart', e => {
+            touchStartX = e.touches[0].clientX;
+            touchStartY = e.touches[0].clientY;
+        }, { passive: true });
+
+        container.addEventListener('touchend', e => {
+            const dx = e.changedTouches[0].clientX - touchStartX;
+            const dy = e.changedTouches[0].clientY - touchStartY;
+            if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 40) {
+                if (dx < 0) { next(); resetTimer(); }
+                else { prev(); resetTimer(); }
+            }
         });
 
         timer = setInterval(next, 3500);
     }, 5000);
+}
+
+function openLetter() {
+    const letter = document.getElementById('letter-text');
+    const btnWrap = document.getElementById('letter-btn-wrap');
+    letter.style.display = 'block';
+    btnWrap.style.display = 'none';
+    letter.scrollIntoView({ behavior: 'smooth' });
 }
     </script>
 </body>
